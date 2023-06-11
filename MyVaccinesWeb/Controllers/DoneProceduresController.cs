@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyVaccinesWeb.Services.DoneProceduresService;
-using MyVaccinesWeb.Services.MyProceduresService;
 
 namespace MyVaccinesWeb.Controllers
 {
@@ -16,10 +15,19 @@ namespace MyVaccinesWeb.Controllers
             _doneProceduresService = doneProceduresService;
         }
 
-        [HttpGet]
-        public async Task<List<MyProcedure>?> GetAllDoneProceduresAsync(int userId)
+        [HttpGet("{userId}")]
+        public async Task<List<ProceduresDone>?> GetAllDoneProceduresAsync(int userId)
         {
             return await _doneProceduresService.GetAllDoneProceduresAsync(userId);
+        }
+
+        [HttpPost("{procedureId}/{fullOrNot}/{actualDate}")]
+        public async Task<ActionResult<bool>> AddDoneProcedureAsync(string procedureId, bool fullOrNot, DateTime actualDate)
+        {
+            bool result = await _doneProceduresService.AddDoneProcedureAsync(procedureId, fullOrNot, actualDate);
+            if (result is false)
+                return BadRequest();
+            return Ok(result);
         }
     }
 }

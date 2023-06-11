@@ -5,9 +5,11 @@ import { Button } from '@mui/material';
 import "./VaccinesTypes.scss";
 import DeleteIcon from '@mui/icons-material/Delete';
 import config from '../../config.json';
+import { useNavigate } from 'react-router-dom';
 
 function VaccinesTypes() {
 
+    const navigate = useNavigate();
     const [vaccinesTypes, setVaccinesTypes] = useState([]);
     const [currRow, setCurrRow] = useState(null);
 
@@ -78,7 +80,7 @@ function VaccinesTypes() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                    // onClick={deleteCountry}
+                // onClick={deleteCountry}
                 >
                     Delete
                 </Button>
@@ -86,7 +88,9 @@ function VaccinesTypes() {
             <div className='BackButton'>
                 <Button
                     variant="outlined"
-                    size="small">
+                    size="small"
+                    onClick={() => navigate('/chooseTable')}
+                >
                     Назад
                 </Button>
             </div>

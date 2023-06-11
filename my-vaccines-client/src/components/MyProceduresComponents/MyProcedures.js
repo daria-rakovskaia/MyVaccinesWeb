@@ -1,28 +1,157 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
-import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Select from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import { Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import config from '../../config.json';
 import "./MyProcedures.scss";
 import exl_ from "./exl_.png";
 import question from "./question.png"
+import { useNavigate, useParams } from "react-router-dom";
+import PopUp from "../PopUpComponents/PopUp";
 
 function MyProcedures() {
 
+    var XLSX = require("xlsx");
+
+    const { userName } = useParams();
     const [procedures, setProcedures] = useState([]);
+    const [userId, setUserId] = useState(0);
+    const [types, setTypes] = useState([]);
+    const [illnesses, setIllnesses] = useState([]);
+    const [type, setType] = useState("");
+    const [illness, setIllness] = useState("");
+    const [currRow, setCurrRow] = useState(null);
+    const navigate = useNavigate();
+    const [popUpActive, setPopUpActive] = useState(false);
+
+    const exportExcel = () => {
+        let proceduresExport = [];
+        rows.forEach(p => {
+            proceduresExport.push({
+                "Фамилия": p.surname,
+                "Имя": p.name,
+                "Отчество": p.patronymic,
+                "Тип пациента": p.patientType,
+                "Вакцина": p.vaccine,
+                "Заболевание": p.illness,
+                "Дата": p.date
+            });
+        });
+        const ws = XLSX.utils.json_to_sheet(proceduresExport);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Мои процедуры");
+        let buf = XLSX.write(wb, { bookType: "xlsx", type: "buffer" });
+        XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+        XLSX.writeFile(wb, "Мои процедуры.xlsx");
+    }
+
+    useEffect(() => {
+        setCurrRow(currRow);
+    }, [currRow]);
+
+    const getCurrRow = (grid) => {
+        setCurrRow(grid.row);
+    };
+
+    const deleteProcedure = async () => {
+        if (currRow !== null) {
+            await axios.delete(`${config.proceduresUrl}/${currRow.id}`);
+            getProcedures();
+            setCurrRow(null);
+        }
+    };
+
+    useEffect(() => {
+        getTypes();
+    }, []);
+
+    const getTypes = async () => {
+        await axios.get(config.patientsTypesUrl).then(data => {
+            setTypes(data.data);
+        })
+    }
+
+    useEffect(() => {
+        getIllnesses();
+    }, []);
+
+    const getIllnesses = async () => {
+        await axios.get(config.vaccinesTypesUrl).then(data => {
+            setIllnesses(data.data);
+        })
+    }
+
+    useEffect(() => {
+        getUserId();
+        console.log(userId);
+    }, [userId]);
+
+    const getUserId = async () => {
+        await axios.get(`${config.userUrl}/${userName}`).then(data => {
+            setUserId(data.data[0].id);
+        })
+    }
+
+    const getProcedures = async () => {
+        const res = await axios.get(`${config.proceduresUrl}/${userId}`);
+        if (type === '' && illness === '') { setProcedures(res.data); }
+        else {
+            if (type !== '' && illness === '') {
+                setProcedures(res.data.filter(p => p.patient.type.name === type));
+            }
+            else if (type === '' && illness !== '') {
+                setProcedures(res.data.filter(p => p.vaccine.type.name === illness));
+            }
+            else if (type !== '' && illness !== '') {
+                setProcedures(res.data.filter(p => p.patient.type.name === type && p.vaccine.type.name === illness));
+            }
+        }
+    };
 
     useEffect(() => {
         getProcedures();
-    }, []);
+    }, [procedures]);
 
-    const getProcedures = async () => {
-        await axios.get(config.proceduresUrl).then(data => {
-            setProcedures(data.data);
-        })
+    useEffect(() => {
+        setIllness(illness);
+    }, [illness]);
+
+    useEffect(() => {
+        setType(type);
+    }, [type]);
+
+    const handleSelectIllnessChange = (e) => {
+        setIllness(e.target.value);
+    };
+
+    const handleSelectTypeChange = (e) => {
+        setType(e.target.value);
+    };
+
+    const typesItems = types.map((type) => {
+        return <MenuItem value={type.name} key={type.id}>{type.name}</MenuItem>
+    });
+
+    const illnessesItems = illnesses.map((illness) => {
+        return <MenuItem value={illness.name} key={illness.id}>{illness.name}</MenuItem>
+    });
+
+    const resetFilters = () => {
+        setType('');
+        setIllness('');
+    }
+
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editProcedure/${userName}/${currRow.id}`);
+        }
+    }
+
+    const navigateToAddDoneProcedure = () => {
+        if (currRow !== null) {
+            return navigate(`/addDoneProcedure/${userName}/${currRow.id}`);
+        }
     }
 
     const columns = [
@@ -48,102 +177,160 @@ function MyProcedures() {
     }))
 
     return (
-        <div className="MainContainer">
-            <div className="FiltersContainer" style={{ float: "left" }}>
-                <div className="ButtonContainer" style={{ marginLeft: "50px" }}>
-                    <Button
-                        variant="outlined"
-                        size="large">
-                        Фильтровать
-                    </Button>
-                </div>
-                <div className="PatientTypesFilter">
-                    <FormControl sx={{ marginLeft: 10, minWidth: 250 }}>
-                        <InputLabel>Тип пациента</InputLabel>
-                        <Select></Select>
-                    </FormControl>
-                </div>
-                <div className="IllnessFilter">
-                    <FormControl sx={{ marginLeft: 5, minWidth: 250 }}>
-                        <InputLabel>Заболевание</InputLabel>
-                        <Select></Select>
-                    </FormControl>
-                </div>
-                <div className="PictureButtonsContainer" style={{ marginTop: "15px" }}>
-                        <button className="ExlButton">
+        <main>
+            <div className="MainContainer">
+                <div className="FiltersContainer" style={{ float: "left", flexDirection: "row" }}>
+                    <div className="ButtonContainer" style={{ marginLeft: "50px", flexDirection: "columns" }}>
+                        <h3 style={{ fontFamily: "Open sans", marginBottom: "10px" }}>
+                            Фильтрация
+                        </h3>
+                        <div style={{ marginBottom: "25px" }}>
+                            <Button
+                                onClick={resetFilters}
+                                size="small"
+                                variant="outlined"
+                                color="info"
+                            >
+                                Сбросить фильтры
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="PatientTypesFilter">
+                        <FormControl sx={{ marginLeft: 10, minWidth: 250 }}>
+                            <InputLabel>Тип пациента</InputLabel>
+                            <Select
+                                label="Тип пациента"
+                                sx={{ minWidth: "250px" }}
+                                onChange={handleSelectTypeChange}
+                                value={type}
+                            >
+                                {typesItems}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div className="IllnessFilter">
+                        <FormControl sx={{ marginLeft: 5, minWidth: 250 }}>
+                            <InputLabel>Заболевание</InputLabel>
+                            <Select
+                                label="Заболевание"
+                                sx={{ minWidth: "250px" }}
+                                onChange={handleSelectIllnessChange}
+                                value={illness}
+                            >
+                                {illnessesItems}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div style={{ marginLeft: "220px" }}>
+                        <button
+                            style={{
+                                border: "none",
+                                outline: "none",
+                                backgroundColor: "white"
+                            }}
+                            onClick={exportExcel}
+                        >
                             <img src={exl_}
-                                width={50} />
-                        </button>
-                        <button className="QuestionButton">
-                            <img src={question}
-                                width={50} />
+                                width="50px"
+                            />
                         </button>
                     </div>
-            </div>
-            <div className="DataGridContainer">
-                <div className="ProceduresDataGrid">
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        sx={{
-                            '.MuiDataGrid-columnHeaderTitle': {
-                                fontWeight: 'bold !important',
-                                overflow: 'visible !important'
-                            }
-                        }}
-                        initialState={{
-                            columns: {
-                                columnVisibilityModel: {
-                                    id: false
-                                },
-                            },
-                        }}>
-                    </DataGrid>
+                    &nbsp;
+                    &nbsp;
+                    <div>
+                        <button
+                            style={{
+                                border: "none",
+                                outline: "none",
+                                backgroundColor: "white"
+                            }}
+                            onClick={() => { setPopUpActive(true) }}
+                        >
+                            <img src={question}
+                                width="50px"
+                            />
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div className="ButtonsContainer" style={{ marginTop: "15px", float: "left", marginLeft: "40px" }}>
-                <div className="crudButtonsContainer" style={{ float: "left" }}>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        size="large">
-                        Add
-                    </Button>
-                    &nbsp;
-                    <Button
-                        variant="contained"
-                        color="error"
-                        size="large"
-                        startIcon={<DeleteIcon />}>
-                        Delete
-                    </Button>
-                    &nbsp;
-                    <Button
-                        variant="contained"
-                        size="large">
-                        Edit
-                    </Button>
-                    <div className="DoneProcButtonContainer" style={{ marginTop: "15px" }}>
+                <div className="DataGridContainer">
+                    <div className="ProceduresDataGrid">
+                        <DataGrid
+                            id="proceduresData"
+                            rows={rows}
+                            columns={columns}
+                            onRowClick={getCurrRow}
+                            sx={{
+                                '.MuiDataGrid-columnHeaderTitle': {
+                                    fontWeight: 'bold !important',
+                                    overflow: 'visible !important'
+                                }
+                            }}
+                            initialState={{
+                                columns: {
+                                    columnVisibilityModel: {
+                                        id: false
+                                    },
+                                },
+                            }}
+                        >
+                        </DataGrid>
+                    </div>
+                </div>
+                <div className="ButtonsContainer" style={{ marginTop: "15px", float: "left", marginLeft: "40px" }}>
+                    <div className="crudButtonsContainer" style={{ float: "left" }}>
+                        <Button
+                            variant="contained"
+                            color="success"
+                            size="large"
+                            onClick={() => navigate(`/addProcedure/${userName}`)}
+                        >
+                            Add
+                        </Button>
+                        &nbsp;
+                        <Button
+                            variant="contained"
+                            color="error"
+                            size="large"
+                            startIcon={<DeleteIcon />}
+                            onClick={deleteProcedure}
+                        >
+                            Delete
+                        </Button>
+                        &nbsp;
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={navigateToEdit}
+                        >
+                            Edit
+                        </Button>
+                        <div className="DoneProcButtonContainer" style={{ marginTop: "15px" }}>
+                            <Button
+                                variant="outlined"
+                                size="large"
+                                onClick={() => navigate(`/doneProcedures/${userName}`)}
+                            >
+                                Сделанные процедуры
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+                <div style={{ float: "right", marginRight: "40px" }}>
+                    <div style={{ marginTop: "15px" }}>
                         <Button
                             variant="outlined"
-                            size="large">
-                            Сделанные процедуры
+                            color="success"
+                            size="large"
+                            onClick={navigateToAddDoneProcedure}
+                        >
+                            Процедура сделана
                         </Button>
                     </div>
                 </div>
             </div>
-            <div style={{ float: "right", marginRight: "40px" }}>
-                <div style={{ marginTop: "15px" }}>
-                    <Button
-                        variant="outlined"
-                        color="success"
-                        size="large">
-                        Процедура сделана
-                    </Button>
-                </div>
-            </div>
-        </div>
-    )
-}
+            <PopUp trigger={popUpActive} setTrigger={setPopUpActive}></PopUp>
+        </main>
+    );
+};
 
 export default MyProcedures;

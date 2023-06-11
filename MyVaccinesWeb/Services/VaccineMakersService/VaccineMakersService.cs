@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using MyVaccinesWeb.Models;
 using MyVaccinesWeb.My_Classes;
+using System.Diagnostics.Metrics;
+using System.Net.WebSockets;
 
 namespace MyVaccinesWeb.Services.VaccineMakersService
 {
@@ -15,6 +18,8 @@ namespace MyVaccinesWeb.Services.VaccineMakersService
 
         public async Task<bool> AddVaccineMakerAsync(MyVaccineMakers vaccineMaker)
         {
+            if (vaccineMaker.Name.Trim() == "")
+                return false;
             vaccineMaker.AddVaccineMaker(Context);
             return await Context.SaveChangesAsync() >= 1;
         }
@@ -31,16 +36,27 @@ namespace MyVaccinesWeb.Services.VaccineMakersService
 
         public async Task<List<VaccinesMaker>?> GetAllVaccineMakersAsync()
         {
-            return await Context.VaccinesMakers.Include(vm => vm.Country).ToListAsync();
+            var vaccineMakers = await Context.VaccinesMakers.Include(vm => vm.Country).ToListAsync();
+            foreach (var vm in vaccineMakers)
+            {
+                vm.Name = vm.Name.Trim();
+                vm.Country.Name = vm.Country.Name.Trim();
+            }
+            return vaccineMakers;
         }
 
         public async Task<VaccinesMaker?> GetSingleVaccineMakerAsync(int id)
         {
-            return await Context.VaccinesMakers.Include(vm => vm.Country).FirstOrDefaultAsync(vm => vm.Id == id);
+            var vaccineMaker = await Context.VaccinesMakers.Include(vm => vm.Country).FirstOrDefaultAsync(vm => vm.Id == id);
+            vaccineMaker.Name = vaccineMaker.Name.Trim();
+            vaccineMaker.Country.Name = vaccineMaker.Country.Name.Trim();
+            return vaccineMaker;
         }
 
         public async Task<bool> UpdateVaccineMakerAsync(int id, MyVaccineMakers vaccineMaker)
         {
+            if (vaccineMaker.Name.Trim() == "")
+                return false;
             vaccineMaker.UpdateVaccineMaker(id, Context);
             return await Context.SaveChangesAsync() >= 1;
         }

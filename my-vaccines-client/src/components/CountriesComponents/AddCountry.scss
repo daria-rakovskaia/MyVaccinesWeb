@@ -9,12 +9,11 @@
     }
     align-items: center;
     .EnterFieldsContainer{
-        width: 400px;
-        height: 100px;
+        width: fit-content + 50px;
+        height: fit-content + 50px;
         border-color: lightgray;
         justify-content: center;
         align-items: center;
-        flex-direction: row;
         margin: auto;
         display: flex;
         box-shadow: 0 3px 8px gray;

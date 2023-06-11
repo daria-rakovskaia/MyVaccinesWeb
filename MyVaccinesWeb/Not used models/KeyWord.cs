@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace MyVaccinesWeb.Models;
+namespace MyVaccinesWeb.Services.AdminsService;
 
 public partial class KeyWord
 {
@@ -10,6 +9,5 @@ public partial class KeyWord
 
     public string Word { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<ProceduresKeyWord> ProceduresKeyWords { get; set; } = new List<ProceduresKeyWord>();
 }

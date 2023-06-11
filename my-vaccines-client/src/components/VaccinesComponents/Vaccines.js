@@ -5,9 +5,11 @@ import { Button } from '@mui/material';
 import "./Vaccines.scss";
 import DeleteIcon from '@mui/icons-material/Delete';
 import config from '../../config.json';
+import { useNavigate } from 'react-router-dom';
 
 function Vaccines() {
 
+    const navigate = useNavigate();
     const [vaccines, setVaccines] = useState([]);
     const [currRow, setCurrRow] = useState(null);
 
@@ -66,7 +68,7 @@ function Vaccines() {
                             overflow: 'visible !important'
                         }
                     }}
-                    // onRowClick={getCurrRow}
+                // onRowClick={getCurrRow}
                 />
             </div>
             <div className='ButtonsContainer'>
@@ -82,7 +84,7 @@ function Vaccines() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                    // onClick={deleteCountry}
+                // onClick={deleteCountry}
                 >
                     Delete
                 </Button>
@@ -90,7 +92,9 @@ function Vaccines() {
             <div className='BackButton'>
                 <Button
                     variant="outlined"
-                    size="small">
+                    size="small"
+                    onClick={() => navigate('/chooseTable')}
+                >
                     Назад
                 </Button>
             </div>

@@ -5,9 +5,11 @@ import { Button } from '@mui/material';
 import "./DataGridForCountries.scss";
 import DeleteIcon from '@mui/icons-material/Delete';
 import config from '../../config.json';
+import { useNavigate } from 'react-router-dom';
 
 function DataGridCountries() {
 
+    const navigate = useNavigate();
     const [countries, setCountries] = useState([]);
     const [currRow, setCurrRow] = useState(null);
 
@@ -36,6 +38,12 @@ function DataGridCountries() {
             setCurrRow(null);
         }
     };
+
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editCountry/${currRow.id}`);
+        }
+    }
 
     const columns = [
         { field: "id", headerName: "ID", width: 90, align: 'center', headerAlign: 'center', },
@@ -69,6 +77,7 @@ function DataGridCountries() {
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={navigateToEdit}
                 >
                     Edit
                 </Button>
@@ -86,7 +95,9 @@ function DataGridCountries() {
             <div className='BackButton'>
                 <Button
                     variant="outlined"
-                    size="small">
+                    size="small"
+                    onClick={() => navigate('/chooseTable')}
+                >
                     Назад
                 </Button>
             </div>
@@ -95,6 +106,7 @@ function DataGridCountries() {
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate('/addCountry')}
                 >
                     Add
                 </Button>

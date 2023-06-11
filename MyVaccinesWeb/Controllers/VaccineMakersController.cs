@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyVaccinesWeb.My_Classes;
-using MyVaccinesWeb.Services.KeyWordsService;
 using MyVaccinesWeb.Services.VaccineMakersService;
 using MyVaccinesWeb.Services.VaccineService;
 

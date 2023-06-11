@@ -1,7 +1,10 @@
 import { Button } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function ChooseTable() {
+
+    const navigate = useNavigate();
 
     return (
         <div className="MainContainer">
@@ -13,39 +16,50 @@ function ChooseTable() {
                     alignContent: "center",
                     justifyContent: "center",
                     display: "flex"
-                }}>
+                }}
+            >
                 <Button
                     color="secondary"
                     variant="contained"
-                    size="medium">
+                    size="medium"
+                    onClick={() => navigate('/countries')}
+                >
                     Countries
                 </Button>
                 &nbsp;
                 <Button
                     color="secondary"
                     variant="contained"
-                    size="medium">
+                    size="medium"
+                    onClick={() => navigate('/patientsTypes')}
+                >
                     PatientsTypes
                 </Button>
                 &nbsp;
                 <Button
                     color="secondary"
                     variant="contained"
-                    size="medium">
+                    size="medium"
+                    onClick={() => navigate('/vaccines')}
+                >
                     Vaccines
                 </Button>
                 &nbsp;
                 <Button
                     color="secondary"
                     variant="contained"
-                    size="medium">
+                    size="medium"
+                    onClick={() => navigate('/vaccineMakers')}
+                >
                     VaccinesMakers
                 </Button>
                 &nbsp;
                 <Button
                     color="secondary"
                     variant="contained"
-                    size="medium">
+                    size="medium"
+                    onClick={() => navigate('/vaccineTypes')}
+                >
                     VaccinesTypes
                 </Button>
             </div>

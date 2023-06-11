@@ -13,7 +13,9 @@ namespace MyVaccinesWeb.Services.CountriesService
 
         public async Task<bool> AddCountryAsync(Country country)
         {
-            var countries = Context.Countries.ToList();
+            if (country.Name.Trim() == "" || Regex.IsMatch(country.Name, @"\d"))
+                return false;
+            var countries = Context.Countries.ToList();    
             foreach (var item in countries)
             {
                 if (item.Name.ToLower().Replace(" ", "") == country.Name.ToLower().Replace(" ", ""))
@@ -53,6 +55,8 @@ namespace MyVaccinesWeb.Services.CountriesService
 
         public async Task<bool> UpdateCountryAsync(int id, Country country)
         {
+            if (country.Name.Trim() == "" || Regex.IsMatch(country.Name, @"\d"))
+                return false;
             var countries = Context.Countries.ToList();
             foreach (var item in countries)
             {

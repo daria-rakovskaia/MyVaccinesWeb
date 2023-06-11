@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyVaccinesWeb.Services.KeyWordsService;
+using MyVaccinesWeb.Services.AdminsService;
 using MyVaccinesWeb.Services.VaccineTypesService;
 
 namespace MyVaccinesWeb.Controllers

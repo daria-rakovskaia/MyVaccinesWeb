@@ -16,6 +16,14 @@ public partial class MyProcedure
 
     public DateTime Date { get; set; }
 
+    public MyProcedure(int patientId, int vaccineId, DateTime date, int userId)
+    {
+        PatientId = patientId;
+        VaccineId = vaccineId;
+        Date = date;
+        UserId = userId;
+    }
+
     public virtual MyPatient Patient { get; set; } = null!;
 
     [JsonIgnore]

@@ -5,9 +5,11 @@ import { Button } from '@mui/material';
 import "./VaccinesMakers.scss";
 import DeleteIcon from '@mui/icons-material/Delete';
 import config from '../../config.json';
+import { useNavigate } from 'react-router-dom';
 
 function VaccinesMakers() {
 
+    const navigate = useNavigate();
     const [vaccinesMakers, setVaccinesMakers] = useState([]);
     const [currRow, setCurrRow] = useState(null);
 
@@ -29,13 +31,19 @@ function VaccinesMakers() {
         setCurrRow(grid.row);
     };
 
-    // const deleteCountry = async () => {
-    //     if (currRow !== null) {
-    //         await axios.delete(`${config.countriesUrl}/${currRow.id}`);
-    //         getCountries();
-    //         setCurrRow(null);
-    //     }
-    // };
+    const deleteVaccineMaker = async () => {
+        if (currRow !== null) {
+            await axios.delete(`${config.vaccinesMakersUrl}/${currRow.id}`);
+            getVaccinesMakers();
+            setCurrRow(null);
+        }
+    };
+
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editVaccineMaker/${currRow.id}`);
+        }
+    }
 
     const columns = [
         { field: "id", headerName: "ID", width: 90, align: 'center', headerAlign: 'center', },
@@ -64,13 +72,14 @@ function VaccinesMakers() {
                             overflow: 'visible !important'
                         }
                     }}
-                    // onRowClick={getCurrRow}
+                    onRowClick={getCurrRow}
                 />
             </div>
             <div className='ButtonsContainer'>
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={navigateToEdit}
                 >
                     Edit
                 </Button>
@@ -80,7 +89,7 @@ function VaccinesMakers() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                    // onClick={deleteCountry}
+                    onClick={deleteVaccineMaker}
                 >
                     Delete
                 </Button>
@@ -88,7 +97,9 @@ function VaccinesMakers() {
             <div className='BackButton'>
                 <Button
                     variant="outlined"
-                    size="small">
+                    size="small"
+                    onClick={() => navigate('/chooseTable')}
+                >
                     Назад
                 </Button>
             </div>
@@ -97,6 +108,7 @@ function VaccinesMakers() {
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate('/addVaccineMaker')}
                 >
                     Add
                 </Button>

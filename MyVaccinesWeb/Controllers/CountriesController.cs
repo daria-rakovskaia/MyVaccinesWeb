@@ -23,7 +23,7 @@ namespace MyVaccinesWeb.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Vaccine>?> GetSingleCountryAsync(int id)
+        public async Task<ActionResult<Country>?> GetSingleCountryAsync(int id)
         {
             var result = await _countriesService.GetSingleCountryAsync(id);
             if (result is null)

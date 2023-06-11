@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using MyVaccinesWeb.Services.AdminsService;
 
 namespace MyVaccinesWeb.Models;
 
@@ -118,6 +119,7 @@ public partial class ProceduresContext : DbContext
             entity.ToTable("ProceduresDone");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ActualDate).HasColumnType("date");
 
             entity.HasOne(d => d.Procedure).WithMany(p => p.ProceduresDones)
                 .HasForeignKey(d => d.ProcedureId)
