@@ -16,6 +16,13 @@ public partial class Vaccine
 
     public virtual VaccinesMaker Maker { get; set; } = null!;
 
+    public Vaccine(string name, int makerId, int typeId)
+    {
+        Name = name;
+        MakerId = makerId;
+        TypeId = typeId;
+    }
+
     [JsonIgnore]
     public virtual ICollection<MyProcedure> MyProcedures { get; set; } = new List<MyProcedure>();
 

@@ -1,8 +1,39 @@
 import React from "react";
-import { Button, Input } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import "./EditVaccineType.scss"
+import { useNavigate, useParams } from "react-router-dom";
+import config from '../../config.json';
+import axios from "axios";
+import { useState } from "react";
 
-function EditVaccineType() {
+function EditVaccinesTypes() {
+
+    const { id } = useParams();
+    const { vtName } = useParams();
+    const [error, setError] = useState(false);
+    const navigate = useNavigate();
+
+    const [vaccineType, setVaccineType] = useState({
+        id: id,
+        name: vtName
+    });
+
+    const handleChange = name => event => {
+        setError(false);
+        setVaccineType({ ...vaccineType, [name]: event.target.value });
+    };
+
+    const putVaccineType = async () => {
+        try {
+            await axios.put(`${config.vaccinesTypesUrl}/${id}`, vaccineType);
+            setError(false);
+            return navigate('/vaccineTypes');
+        } catch (e) {
+            if (e.response && e.response.data) {
+                setError(true);
+            }
+        }
+    }
 
     return (
         <div className="MainContainer">
@@ -14,13 +45,21 @@ function EditVaccineType() {
                 &nbsp;
                 &nbsp;
                 &nbsp;
-                <Input defaultValue="Вирусный гепатит B" />
+                <TextField
+                    label="Введите тип вакцины"
+                    value={vaccineType.name}
+                    variant="outlined"
+                    onChange={handleChange("name")}
+                    error={error}
+                    helperText={error ? "Произошла ошибка при изменении" : ""}
+                />
             </div>
             <div className="SubmitButton">
                 <Button
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={putVaccineType}
                 >
                     Подтвердить
                 </Button>
@@ -28,7 +67,9 @@ function EditVaccineType() {
             <div className="backButton">
                 <Button
                     variant="outlined"
-                    size="small">
+                    size="small"
+                    onClick={() => navigate('/vaccineTypes')}
+                >
                     Назад
                 </Button>
             </div>
@@ -37,4 +78,4 @@ function EditVaccineType() {
 
 }
 
-export default EditVaccineType
+export default EditVaccinesTypes

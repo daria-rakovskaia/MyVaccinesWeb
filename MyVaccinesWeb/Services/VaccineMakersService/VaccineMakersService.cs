@@ -60,5 +60,16 @@ namespace MyVaccinesWeb.Services.VaccineMakersService
             vaccineMaker.UpdateVaccineMaker(id, Context);
             return await Context.SaveChangesAsync() >= 1;
         }
+
+        public static int GetVaccineMakerId(string name, ProceduresContext context)
+        {
+            var vaccineMakers = context.VaccinesMakers.ToList();
+            foreach (var vm in vaccineMakers)
+            {
+                if (vm.Name.Trim() == name.Trim())
+                    return vm.Id;
+            }
+            return -1;
+        }
     }
 }

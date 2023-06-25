@@ -156,7 +156,7 @@ function DoneProcedures() {
             <div className="MainContainer">
                 <div className="FiltersContainer" style={{ float: "left", flexDirection: "row" }}>
                     <div className="ButtonContainer" style={{ marginLeft: "50px", flexDirection: "columns" }}>
-                        <h3 style={{ fontFamily: "Open sans", marginBottom: "10px" }}>
+                        <h3 style={{ marginBottom: "10px" }}>
                             Фильтрация
                         </h3>
                         <div style={{ marginBottom: "25px" }}>
@@ -258,6 +258,16 @@ function DoneProcedures() {
                             onClick={() => navigate(`/procedures/${userName}`)}
                         >
                             Предстоящие процедуры
+                        </Button>
+                    </div>
+                    <div className="ExitBtn" style={{ marginTop: "15px", marginLeft: "-30px" }}>
+                        <Button
+                            variant="text"
+                            size="medium"
+                            color="error"
+                            onClick={() => navigate(`/`)}
+                        >
+                            Выйти из системы
                         </Button>
                     </div>
                 </div>

@@ -17,27 +17,27 @@ function DataGridPatientsTypes() {
         getPatientsTypes();
     }, []);
 
-    useEffect(() => {
-        setCurrRow(currRow);
-    }, [currRow]);
-
     const getPatientsTypes = async () => {
         await axios.get(config.patientsTypesUrl).then(data => {
             setPatientsTypes(data.data);
         })
     }
 
+    useEffect(() => {
+        setCurrRow(currRow);
+    }, [currRow]);
+
     const getCurrRow = (grid) => {
         setCurrRow(grid.row);
     };
 
-    // const deleteCountry = async () => {
-    //     if (currRow !== null) {
-    //         await axios.delete(`${config.countriesUrl}/${currRow.id}`);
-    //         getCountries();
-    //         setCurrRow(null);
-    //     }
-    // };
+    const deletePatientType = async () => {
+        if (currRow !== null) {
+            await axios.delete(`${config.patientsTypesUrl}/${currRow.id}`);
+            getPatientsTypes();
+            setCurrRow(null);
+        }
+    };
 
     const columns = [
         { field: "id", headerName: "ID", width: 90, align: 'center', headerAlign: 'center', },
@@ -49,12 +49,18 @@ function DataGridPatientsTypes() {
         type: row.name
     }))
 
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editPatientType/${currRow.id}/${currRow.type}`);
+        }
+    }
+
     return (
         <div className='MainContainer'>
             <div className='ContainerHeader'>
                 <h1 style={{ fontWeight: '400' }}>PatientsTypes</h1>
             </div>
-            <div className='CountriesDataGrid'>
+            <div className='PTDataGrid'>
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -64,13 +70,14 @@ function DataGridPatientsTypes() {
                             overflow: 'visible !important'
                         }
                     }}
-                // onRowClick={getCurrRow}
+                    onRowClick={getCurrRow}
                 />
             </div>
             <div className='ButtonsContainer'>
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={navigateToEdit}
                 >
                     Edit
                 </Button>
@@ -80,7 +87,7 @@ function DataGridPatientsTypes() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                // onClick={deleteCountry}
+                    onClick={deletePatientType}
                 >
                     Delete
                 </Button>
@@ -99,6 +106,7 @@ function DataGridPatientsTypes() {
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate('/addPatientType')}
                 >
                     Add
                 </Button>

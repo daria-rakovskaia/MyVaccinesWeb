@@ -20,6 +20,12 @@ import VaccinesTypes from './components/VaccinesTypesComponents/VaccinesTypes';
 import EditProcedure from './components/EditProcedureComponents/EditProcedure';
 import RegistrationPage from './components/RegistrationComponents/Registration';
 import AddDoneProcedure from './components/AddDoneProcedure/AddDoneProcedure';
+import AddPatientType from './components/PatientsTypesComponents/AddPatientsTypes';
+import EditPatientType from './components/PatientsTypesComponents/EditPatientsTypes';
+import EditVaccinesTypes from './components/VaccinesTypesComponents/EditVaccinesTypes';
+import AddVaccineType from './components/VaccinesTypesComponents/AddVaccineType';
+import AddVaccine from './components/VaccinesComponents/AddVaccine';
+import EditVaccine from './components/VaccinesComponents/EditVaccine';
 
 const App = () => {
   return (
@@ -30,11 +36,17 @@ const App = () => {
         <Route path='/addCountry' element={<AddCountry />} />
         <Route path='/editCountry/:id' element={<EditCountry />} />
         <Route path='/patientsTypes' element={<DataGridPatientsTypes />} />
+        <Route path='/addPatientType' element={<AddPatientType />} />
+        <Route path='/editPatientType/:id/:ptName' element={<EditPatientType />} />
         <Route path='/vaccines' element={<Vaccines />} />
+        <Route path='/addVaccine' element={<AddVaccine />} />
+        <Route path='/editVaccine/:id/:name/:maker/:type' element={<EditVaccine />} />
         <Route path='/vaccineMakers' element={<VaccinesMakers />} />
         <Route path='/addVaccineMaker' element={<AddVaccineMaker />} />
         <Route path='/editVaccineMaker/:id' element={<EditVaccineMaker />} />
         <Route path='/vaccineTypes' element={<VaccinesTypes />} />
+        <Route path='/addVaccineType' element={<AddVaccineType />} />
+        <Route path='/editVaccineType/:id/:vtName' element={<EditVaccinesTypes />} />
         <Route path='/chooseTable' element={<ChooseTable />} />
         <Route path='/adminLogin' element={<LogInAdminPage />} />
         <Route path='/registration' element={<RegistrationPage />} />

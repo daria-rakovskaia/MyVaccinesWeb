@@ -31,13 +31,13 @@ function VaccinesTypes() {
         setCurrRow(grid.row);
     };
 
-    // const deleteCountry = async () => {
-    //     if (currRow !== null) {
-    //         await axios.delete(`${config.countriesUrl}/${currRow.id}`);
-    //         getCountries();
-    //         setCurrRow(null);
-    //     }
-    // };
+    const deleteVaccineType = async () => {
+        if (currRow !== null) {
+            await axios.delete(`${config.vaccinesTypesUrl}/${currRow.id}`);
+            getVaccinesTypes();
+            setCurrRow(null);
+        }
+    };
 
     const columns = [
         { field: "id", headerName: "ID", width: 90, align: 'center', headerAlign: 'center', },
@@ -49,12 +49,18 @@ function VaccinesTypes() {
         type: row.name
     }))
 
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editVaccineType/${currRow.id}/${currRow.type}`);
+        }
+    }
+
     return (
         <div className='MainContainer'>
             <div className='ContainerHeader'>
                 <h1 style={{ fontWeight: '400' }}>VaccinesTypes</h1>
             </div>
-            <div className='CountriesDataGrid'>
+            <div className='VaccineTypesDataGrid'>
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -71,6 +77,7 @@ function VaccinesTypes() {
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={navigateToEdit}
                 >
                     Edit
                 </Button>
@@ -80,7 +87,7 @@ function VaccinesTypes() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                // onClick={deleteCountry}
+                    onClick={deleteVaccineType}
                 >
                     Delete
                 </Button>
@@ -99,6 +106,7 @@ function VaccinesTypes() {
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate('/addVaccineType')}
                 >
                     Add
                 </Button>

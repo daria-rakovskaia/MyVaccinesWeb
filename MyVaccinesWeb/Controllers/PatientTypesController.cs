@@ -47,5 +47,14 @@ namespace MyVaccinesWeb.Controllers
                 return BadRequest();
             return Ok(result);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<bool>> UpdatePatientTypeAsync(int id, PatientsType patientsType)
+        {
+            bool result = await _patientTypesService.UpdatePatientTypeAsync(id, patientsType);
+            if (!result)
+                return BadRequest();
+            return Ok(result);
+        }
     }
 }

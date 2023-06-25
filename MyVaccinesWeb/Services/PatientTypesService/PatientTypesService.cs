@@ -14,15 +14,16 @@ namespace MyVaccinesWeb.Services.PatientTypesService
 
         public async Task<bool> AddPatientTypeAsync(PatientsType patientType)
         {
+            if (patientType.Name.Trim() == "" || Regex.IsMatch(patientType.Name, @"\d"))
+                return false;
             var patientTypes = Context.PatientsTypes.ToList();
-            foreach (var item in patientTypes)
+            foreach (var pt in patientTypes)
             {
-                if (item.Name.ToLower().Replace(" ", "") == patientType.Name.ToLower().Replace(" ", ""))
+                if (pt.Name.ToLower().Trim() == patientType.Name.ToLower().Trim())
                     return false;
             }
             Context.PatientsTypes.Add(patientType);
-            await Context.SaveChangesAsync();
-            return true;
+            return await Context.SaveChangesAsync() >= 1;
         }
 
         public async Task<bool> DeletePatientTypeAsync(int id)
@@ -31,16 +32,15 @@ namespace MyVaccinesWeb.Services.PatientTypesService
             if (patientType is null)
                 return false;
             Context.PatientsTypes.Remove(patientType);
-            await Context.SaveChangesAsync();
-            return true;
+            return await Context.SaveChangesAsync() >= 1;
         }
 
         public async Task<List<PatientsType>?> GetAllPatientTypesAsync()
         {
             var patientsTypes = await Context.PatientsTypes.ToListAsync();
-            foreach (var patient in patientsTypes)
+            foreach (var pt in patientsTypes)
             {
-                patient.Name = patient.Name.Trim();
+                pt.Name = pt.Name.Trim();
             }
             return patientsTypes;
         }
@@ -48,6 +48,18 @@ namespace MyVaccinesWeb.Services.PatientTypesService
         public async Task<PatientsType?> GetSinglePatientTypeAsync(int id)
         {
             return await Context.PatientsTypes.FindAsync(id);
+        }
+
+        public async Task<bool> UpdatePatientTypeAsync(int id, PatientsType patientType)
+        {
+            if (patientType.Name.Trim() == "" || Regex.IsMatch(patientType.Name, @"\d"))
+                return false;
+            var patientTypes = Context.PatientsTypes.Where(pt => pt.Name == patientType.Name).ToList();
+            if (patientTypes.Any())
+                return false;
+            var pt = Context.PatientsTypes.Find(id);
+            pt.Name = patientType.Name.Trim();
+            return await Context.SaveChangesAsync() >= 1;
         }
     }
 }

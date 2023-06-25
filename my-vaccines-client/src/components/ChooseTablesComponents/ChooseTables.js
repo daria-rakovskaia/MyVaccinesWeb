@@ -63,6 +63,16 @@ function ChooseTable() {
                     VaccinesTypes
                 </Button>
             </div>
+            <div className="ExitBtn" style={{ marginTop: "15px", alignItems: "center", justifyContent: "center", display: "flex" }}>
+                <Button
+                    variant="text"
+                    size="medium"
+                    color="error"
+                    onClick={() => navigate(`/`)}
+                >
+                    Выйти из системы
+                </Button>
+            </div>
         </div>
     )
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
+using MyVaccinesWeb.My_Classes;
 using MyVaccinesWeb.Services.VaccineService;
 
 namespace MyVaccinesWeb.Controllers
@@ -40,11 +42,20 @@ namespace MyVaccinesWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> AddVaccineAsync(Vaccine vaccine)
+        public async Task<ActionResult<bool>> AddVaccineAsync(MyVaccineClass vaccine)
         {
             bool result = await _vaccineService.AddVaccineAsync(vaccine);
             if (result is false)
                 return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<bool>> UpdateVaccineAsync(int id, MyVaccineClass vaccine)
+        {
+            bool result = await _vaccineService.UpdateVaccineAsync(id, vaccine);
+            if (!result)
+                return BadRequest();
             return Ok(result);
         }
     }

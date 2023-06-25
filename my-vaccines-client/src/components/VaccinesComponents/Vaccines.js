@@ -31,13 +31,13 @@ function Vaccines() {
         setCurrRow(grid.row);
     };
 
-    // const deleteCountry = async () => {
-    //     if (currRow !== null) {
-    //         await axios.delete(`${config.countriesUrl}/${currRow.id}`);
-    //         getCountries();
-    //         setCurrRow(null);
-    //     }
-    // };
+    const deleteVaccine = async () => {
+        if (currRow !== null) {
+            await axios.delete(`${config.vaccinesUrl}/${currRow.id}`);
+            getVaccines();
+            setCurrRow(null);
+        }
+    };
 
     const columns = [
         { field: "id", headerName: "ID", width: 90, align: 'center', headerAlign: 'center', },
@@ -52,6 +52,12 @@ function Vaccines() {
         maker: row.maker.name,
         type: row.type.name
     }))
+
+    const navigateToEdit = () => {
+        if (currRow !== null) {
+            return navigate(`/editVaccine/${currRow.id}/${currRow.name}/${currRow.maker}/${currRow.type}`);
+        }
+    }
 
     return (
         <div className='MainContainer'>
@@ -68,13 +74,14 @@ function Vaccines() {
                             overflow: 'visible !important'
                         }
                     }}
-                // onRowClick={getCurrRow}
+                    onRowClick={getCurrRow}
                 />
             </div>
             <div className='ButtonsContainer'>
                 <Button
                     variant="contained"
                     size="large"
+                    onClick={navigateToEdit}
                 >
                     Edit
                 </Button>
@@ -84,7 +91,7 @@ function Vaccines() {
                     color="error"
                     size="large"
                     startIcon={<DeleteIcon />}
-                // onClick={deleteCountry}
+                    onClick={deleteVaccine}
                 >
                     Delete
                 </Button>
@@ -103,6 +110,7 @@ function Vaccines() {
                     variant="contained"
                     color="success"
                     size="large"
+                    onClick={() => navigate('/addVaccine')}
                 >
                     Add
                 </Button>
